@@ -1,60 +1,67 @@
-/*Code insipired by elibretto's extension at: https://chrome.google.com/webstore/detail/nba-timezone-extension/lpbnlpmmjelgjabfaopaalpficcbinjj?hl=en-GB
-I only updated his extension to work in 2022 out of necessity since it wasnt update since 2018*/
+// Define function to update elements with the local time
+function updateTime(className) {
+  // Define the timezone offset for Eastern Time (ET)
+  let ETOffset = -240;
 
-//ScoreboardGame_gameStatusText__wwj1V | Div Home Page
-//h9 text-xs uppercase  | Div Games
-//ScheduleStatusText_base__R5PI0  |  Div Schedule
+  // Get the user's time zone offset from UTC in minutes
+  let userOffset = new Date().getTimezoneOffset();
 
-//maybe regex will be needed in the future if Div class changes, example: document.querySelectorAll('div[class^="ScoreboardGame_gameStatusText"]');
+  // Convert the time zone offset to hours and adjust for the user's location
+  let offset = userOffset / 60 * -1;
 
-function change(x){
-  for(var i = 0; i < x.length; i++){
-    t = x[i].innerHTML
+  // Get all elements with the given class name
+  let elements = document.querySelectorAll(`[class*="${className}"]`);
 
-    bits = t.split(/[\s]+/);
+  // Check if the elements found are empty or not
+  if (elements.length === 0) {
+    console.log(`No element found with class name '${className}'`);
+    return;
+  }
 
-    if(bits[0] != 'Q1' && bits[0] != 'Q2' && bits[0] != 'Q3' && bits[0] != 'Q4' && bits [0] != 'End' && bits [0] != 'Half'){ // Making so the algorithm wont run if the game is already live.
-      t = bits[0];
-      split = t.split(/[:]+/);
+  // Loop through all found elements
+  for (let i = 0; i < elements.length; i++) {
+    let element = elements[i];
 
+    // Split the text content of the element into parts
+    let bits = element.innerHTML.split(/[\s]+/);
+
+    // Check if the game is already live so to not mess with the game time clock. (p is for Games tab and span is for Schedule tab and div is for Home)
+    if (element.tagName.toLowerCase() === 'p' || element.tagName.toLowerCase() === 'span' || element.tagName.toLowerCase() === 'div'
+        && bits[0] != 'Q1' && bits[0] != 'Q2' && bits[0] != 'Q3' && bits[0] != 'Q4' && bits [0] != 'End' && bits [0] != 'Half') {
+
+      // Get the hour and minute from the text content of the element
+      let t = bits[0];
+      let split = t.split(/[:]+/);
+    
+      // Calculate the adjusted hour based on the user's timezone offset
       t = parseInt(split[0]) - offset;
-
+    
+      // Convert 24-hour format to 12-hour format and adjust AM/PM accordingly
       if(t >= 12 && bits[1] == "PM") {
         bits[1] = "AM";
         if (t > 12) {
           t = t - 12;
         }
       }
-          
+              
       if(t >= 12 && bits[1] == "AM") {
         bits[1] = "PM";
         if (t > 12) {
           t = t - 12;
         }
       }
-      x[i].innerHTML = t + ":" + split[1] + " " + bits[1];
+
+      // Update the text content of the element with the adjusted time and user's time zone
+      element.innerHTML = t + ":" + split[1] + " " + bits[1] + " (UTC" + (userOffset > 0 ? '-' : '+') + Math.abs(userOffset / 60) + ")";
     }
   }
 }
 
-window.onload =
-function run() {
+// Define function to run when the window is loaded
+window.onload = function() {
 
-  ETOffset = -240;
-  offset = (new Date().getTimezoneOffset() + ETOffset) / 60;
-  ct = new Date().toString().split(/[\s]+/);
-  localExtension = ct[5];
-
-  timesRun = 0;
-
-  x=document.querySelectorAll('div[class^="ScoreboardGame_gameStatusText"]'); // Home Page
-  change(x);
-
-  y=document.getElementsByClassName('h9 text-xs uppercase'); //Games Tab
-  change(y);
-
-  z=document.getElementsByClassName('ScheduleStatusText_base__R5PI0'); // Schedule Tab
-  change(z);
-
-  //window.addEventListener('click', setTimeout(run, 2000));   trying to make Games Tab update every time you see a different date.
+  // Call the updateTime function for each type of element that needs to be updated in nba.com
+  updateTime('ScoreboardGame_gameStatus');// Home Page
+  updateTime('GameCardMatchupStatusText');// Games Tab
+  updateTime('ScheduleStatusText');// Schedule Tab
 }
