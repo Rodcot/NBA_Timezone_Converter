@@ -26,7 +26,7 @@ function updateTime(className) {
     let bits = element.innerHTML.split(/[\s]+/);
 
     // Check if the game is already live so to not mess with the game time clock. (p is for Games tab and span is for Schedule tab and div is for Home)
-    if (element.tagName.toLowerCase() === 'p' || element.tagName.toLowerCase() === 'span' || element.tagName.toLowerCase() === 'div'
+    if (element.tagName.toLowerCase() === 'p' || element.tagName.toLowerCase() === 'span' || (element.tagName.toLowerCase() === 'div' && className == "ScoreboardGame_gameStatus" )
         && bits[0] != 'Q1' && bits[0] != 'Q2' && bits[0] != 'Q3' && bits[0] != 'Q4' && bits [0] != 'End' && bits [0] != 'Half') {
 
       // Get the hour and minute from the text content of the element
