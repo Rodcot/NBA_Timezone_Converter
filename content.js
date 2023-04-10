@@ -6,8 +6,8 @@ function updateTime(className) {
   // Get the user's time zone offset from UTC in minutes
   let userOffset = new Date().getTimezoneOffset();
 
-  // Convert the time zone offset to hours and adjust for the user's location
-  let offset = userOffset / 60 * -1;
+  // Convert the time zone offset to hours, considering UTC to ET and adjust for the user's location
+  let offset = userOffset / 60 - 4;
 
   // Get all elements with the given class name
   let elements = document.querySelectorAll(`[class*="${className}"]`);
@@ -52,7 +52,7 @@ function updateTime(className) {
       }
 
       // Update the text content of the element with the adjusted time and user's time zone
-      element.innerHTML = t + ":" + split[1] + " " + bits[1] + " (UTC" + (userOffset > 0 ? '-' : '+') + Math.abs(userOffset / 60) + ")";
+      element.innerHTML = t + ":" + split[1] + " " + bits[1] + " (UTC" + (userOffset > 0 ? '-' : '+') + Math.abs(userOffset / 60) + ")"; // bits[1] +
     }
   }
 }
