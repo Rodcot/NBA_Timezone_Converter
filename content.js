@@ -30,24 +30,24 @@ function updateTime(className) {
         && bits[0] != 'Q1' && bits[0] != 'Q2' && bits[0] != 'Q3' && bits[0] != 'Q4' && bits [0] != 'End' && bits [0] != 'Half') {
 
       // Get the hour and minute from the text content of the element
-      let t = bits[0];
+      t = bits[0];
       let split = t.split(/[:]+/);
     
       // Calculate the adjusted hour based on the user's timezone offset
       t = parseInt(split[0]) - offset;
-    
+
       // Convert 24-hour format to 12-hour format and adjust AM/PM accordingly
-      if(t >= 12 && bits[1] == "PM") {
-        bits[1] = "AM";
-        if (t > 12) {
-          t = t - 12;
+      if(parseInt(t) >= 12 && bits[1] == "pm") {
+        bits[1] = "am";
+        if (parseInt(t) > 12) {
+          t = parseInt(t) - 12;
         }
       }
-              
-      if(t >= 12 && bits[1] == "AM") {
-        bits[1] = "PM";
-        if (t > 12) {
-          t = t - 12;
+
+      if(parseInt(t) >= 12 && bits[1] == "am") {
+        bits[1] = "pm";
+        if (parseInt(t) > 12) {
+          t = parseInt(t) - 12;
         }
       }
 
